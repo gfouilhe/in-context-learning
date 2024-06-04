@@ -14,6 +14,7 @@ class DataSampler:
 def get_data_sampler(data_name, n_dims, **kwargs):
     names_to_classes = {
         "gaussian": GaussianSampler,
+        "uniform": UniformSampler
     }
     if data_name in names_to_classes:
         sampler_cls = names_to_classes[data_name]
@@ -56,3 +57,29 @@ class GaussianSampler(DataSampler):
         if n_dims_truncated is not None:
             xs_b[:, :, n_dims_truncated:] = 0
         return xs_b
+
+class UniformSampler(DataSampler):
+    
+    def __init__(self, n_dims, lower=None, upper=None):
+       super().__init__(n_dims)
+       self.lower = lower
+       self.upper = upper
+
+    def sample_xs(self, n_points, b_size, n_dims_truncated=None, seeds=None):
+        # Generating random points in the unit cube
+        if seeds is None:
+            xs_b = torch.rand(b_size, n_points, self.n_dims)
+        else:
+            xs_b = torch.zeros(b_size, n_points, self.n_dims)
+            generator = torch.Generator()
+            assert len(seeds) == b_size
+            for i, seed in enumerate(seeds):
+                generator.manual_seed(seed)
+                xs_b[i] = torch.rand(n_points, self.n_dims, generator=generator)
+        # Scaling to the desired range
+        if self.lower is not None:
+            xs_b = xs_b * (self.upper - self.lower) + self.lower
+        if n_dims_truncated is not None:
+            xs_b[:, :, n_dims_truncated:] = 0
+        return xs_b
+
