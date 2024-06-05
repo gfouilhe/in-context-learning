@@ -78,8 +78,8 @@ batch_size = conf.training.batch_size
 # print("batch_size", batch_size)
 data_sampler = get_data_sampler(conf.training.data, n_dims)
 task_sampler = get_task_sampler(
-    # "quadratic_regression",
-    "linear_regression",
+    "quadratic_regression",
+    # "linear_regression",
     n_dims,
     batch_size,
     **conf.training.task_kwargs
@@ -88,34 +88,70 @@ task_sampler = get_task_sampler(
 task = task_sampler()
 xs = data_sampler.sample_xs(b_size=batch_size, n_points=conf.training.curriculum.points.end)
 ys = task.evaluate(xs)
+
+# print("xs : ", xs[0,0,:])
+# print("ys : ", ys[0,0])
+
 # print("shapes : ",xs.shape, ys.shape)
 
-# plt.figure()
-# plt.scatter(xs[:,:,0], ys, label="data")
-# plt.xlabel("x")
-# plt.ylabel("y_true")
-# plt.show()
-# plt.savefig("/users/p22034/fouilhe/in-context-learning/data.png")
-# plt.close()
+plt.figure()
+plt.scatter(xs[:,:,0], ys, label="data",s=0.5)
+plt.xlabel("x")
+plt.ylabel("y_true")
+
 
 # with torch.no_grad():
 #     pred_on_iid_data = model(xs, ys)
-sparsity = conf.training.task_kwargs.sparsity if "sparsity" in conf.training.task_kwargs else None
+# sparsity = conf.training.task_kwargs.sparsity if "sparsity" in conf.training.task_kwargs else None
+# plt.scatter(xs[:,:,0], pred_on_iid_data, label="prediction",color='orange',marker='x',s=0.5)
 
 metric = task.get_metric()
-loss = metric(pred_on_iid_data, ys).numpy()
+# loss = metric(pred_on_iid_data, ys).numpy()
 
-lower_bound = torch.zeros(n_dims)
-upper_bound = torch.ones(n_dims)
+lower_bound = 1*torch.ones(n_dims)
+upper_bound = 2*torch.ones(n_dims)
 
 data_sampler = get_data_sampler("uniform", n_dims, lower=lower_bound, upper=upper_bound)
-x_test = data_sampler.sample_xs(b_size=1, n_points=3)
+x_test = data_sampler.sample_xs(b_size=1, n_points=20)
+x_test = torch.sort(x_test, dim=0).values
 y_test = task.evaluate(x_test)
 
-print("x_test : ", x_test)
+print("x_test : ", x_test[:,:,0])
 print("y_test : ", y_test)
+plt.scatter(x_test[:,:,0], y_test, label="test data",color='red')
 
 
+
+# a12 = (y_test[:,0] - y_test[:,1])/ (x_test[:,0,0] - x_test[:,1,0])
+# a23 = (y_test[:,1] - y_test[:,2])/ (x_test[:,1,0] - x_test[:,2,0])
+# a13 = (y_test[:,0] - y_test[:,2])/ (x_test[:,0,0] - x_test[:,2,0])
+
+
+# a12 = (y_test[0,:] - y_test[1,:])/ (x_test[0,:,0] - x_test[1,:,0])
+# a23 = (y_test[1,:] - y_test[2,:])/ (x_test[1,:,0] - x_test[2,:,0])
+# a13 = (y_test[0,:] - y_test[2,:])/ (x_test[0,:,0] - x_test[2,:,0])
+
+# print("a12 : ", a12)
+# print("a23 : ", a23)
+# print("a13 : ", a13)
+# print("y1 - a12 x1:", y_test[0,:] - a12*x_test[0,:,0])
+# print("y2 - a12 x1:", y_test[1,:] - a12*x_test[0,:,0])
+
+with torch.no_grad():
+    pred_on_new_data = model(x_test, y_test)
+
+
+print("pred_on_new_data : ", pred_on_new_data)
+# print("x_test : ", x_test)
+# print("y_test : ", y_test)
+
+plt.scatter(x_test[:,:,0], pred_on_new_data[:], label="prediction",color='green')
+
+plt.ylim(-10, 10)
+plt.xlim(-5, 5)
+plt.show()
+plt.savefig("/users/p22034/fouilhe/in-context-learning/data.png")
+plt.close()
 
 
 
@@ -126,10 +162,10 @@ print("y_test : ", y_test)
 #     "decision_tree": 1,
 # }[conf.training.task]
 
-plt.plot(loss.mean(axis=0), lw=2, label="Transformer")
-# plt.axhline(baseline, ls="--", color="gray", label="zero estimator")
-plt.xlabel("# in-context examples")
-plt.ylabel("squared error")
-plt.legend()
-plt.show()
-plt.savefig("/users/p22034/fouilhe/in-context-learning/squared_error.png")
+# # plt.plot(loss.mean(axis=0), lw=2, label="Transformer")
+# # plt.axhline(baseline, ls="--", color="gray", label="zero estimator")
+# plt.xlabel("# in-context examples")
+# plt.ylabel("squared error")
+# plt.legend()
+# plt.show()
+# plt.savefig("/users/p22034/fouilhe/in-context-learning/squared_error.png")

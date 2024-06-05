@@ -1,7 +1,7 @@
 import math
 
 import torch
-
+import torch.linalg as LA
 
 def squared_error(ys_pred, ys):
     return (ys - ys_pred).square()
@@ -96,13 +96,13 @@ class LinearRegression(Task):
     def evaluate(self, xs_b):
         w_b = self.w_b.to(xs_b.device)
         ys_b = self.scale * (xs_b @ w_b)[:, :, 0]
-        print("shapes : ")
-        print(xs_b.shape)
-        print(ys_b.shape)
-        print(w_b.shape)
-        print(self.scale)
-        print((xs_b @ w_b).shape)
-        print((xs_b @ w_b))
+        # print("shapes : ")
+        # print(xs_b.shape)
+        # print(ys_b.shape)
+        # print(w_b.shape)
+        # print(self.scale)
+        # print((xs_b @ w_b).shape)
+        # print((xs_b @ w_b))
         return ys_b
 
     @staticmethod
@@ -117,47 +117,47 @@ class LinearRegression(Task):
     def get_training_metric():
         return mean_squared_error
 
-class QuadraticRegression(Task):
-    def __init__(self, n_dims, batch_size, pool_dict=None, seeds=None, scale=1):
-        """scale: a constant by which to scale the randomly sampled weights."""
-        super(LinearRegression, self).__init__(n_dims, batch_size, pool_dict, seeds)
-        self.scale = scale
+# class QuadraticRegression(Task):
+#     def __init__(self, n_dims, batch_size, pool_dict=None, seeds=None, scale=1):
+#         """scale: a constant by which to scale the randomly sampled weights."""
+#         super(LinearRegression, self).__init__(n_dims, batch_size, pool_dict, seeds)
+#         self.scale = scale
 
-        if pool_dict is None and seeds is None:
-            self.w_b_1 = torch.randn(self.b_size, self.n_dims, 1)
-            self.w_b_2 = torch.randn(self.b_size, self.n_dims, 1)
+#         if pool_dict is None and seeds is None:
+#             self.w_b_1 = torch.randn(self.b_size, self.n_dims, 1)
+#             self.w_b_2 = torch.randn(self.b_size, self.n_dims, 1)
 
-        elif seeds is not None:
-            self.w_b_1 = torch.zeros(self.b_size, self.n_dims, 1)
-            self.w_b_2 = torch.zeros(self.b_size, self.n_dims, 1)
-            generator = torch.Generator()
-            assert len(seeds) == self.b_size
-            for i, seed in enumerate(seeds):
-                generator.manual_seed(seed)
-                self.w_b_1[i] = torch.randn(self.n_dims, 1, generator=generator)
-                self.w_b_2[i] = torch.randn(self.n_dims, 1, generator=generator)
-        else:
-            assert "w" in pool_dict
-            indices = torch.randperm(len(pool_dict["w"]))[:batch_size]
-            self.w_b_1 = pool_dict["w"][indices]
-            self.w_b_2 = pool_dict["w"][indices]
+#         elif seeds is not None:
+#             self.w_b_1 = torch.zeros(self.b_size, self.n_dims, 1)
+#             self.w_b_2 = torch.zeros(self.b_size, self.n_dims, 1)
+#             generator = torch.Generator()
+#             assert len(seeds) == self.b_size
+#             for i, seed in enumerate(seeds):
+#                 generator.manual_seed(seed)
+#                 self.w_b_1[i] = torch.randn(self.n_dims, 1, generator=generator)
+#                 self.w_b_2[i] = torch.randn(self.n_dims, 1, generator=generator)
+#         else:
+#             assert "w" in pool_dict
+#             indices = torch.randperm(len(pool_dict["w"]))[:batch_size]
+#             self.w_b_1 = pool_dict["w"][indices]
+#             self.w_b_2 = pool_dict["w"][indices]
 
-    def evaluate(self, xs_b):
-        w_b = self.w_b.to(xs_b.device)
-        ys_b = self.scale * (xs_b @ w_b)[:, :, 0]
-        return ys_b
+#     def evaluate(self, xs_b):
+#         w_b = self.w_b.to(xs_b.device)
+#         ys_b = self.scale * (xs_b @ w_b)[:, :, 0]
+#         return ys_b
 
-    @staticmethod
-    def generate_pool_dict(n_dims, num_tasks, **kwargs):  # ignore extra args
-        return {"w": torch.randn(num_tasks, n_dims, 1)}
+#     @staticmethod
+#     def generate_pool_dict(n_dims, num_tasks, **kwargs):  # ignore extra args
+#         return {"w": torch.randn(num_tasks, n_dims, 1)}
 
-    @staticmethod
-    def get_metric():
-        return squared_error
+#     @staticmethod
+#     def get_metric():
+#         return squared_error
 
-    @staticmethod
-    def get_training_metric():
-        return mean_squared_error
+#     @staticmethod
+#     def get_training_metric():
+#         return mean_squared_error
 class SparseLinearRegression(LinearRegression):
     def __init__(
         self,
@@ -248,15 +248,21 @@ class QuadraticRegression(LinearRegression):
     def evaluate(self, xs_b):
         self.w_b = torch.ones(self.b_size, self.n_dims, 1)
         w_b = self.w_b.to(xs_b.device)
-        ys_b_quad = ((xs_b**2 @ w_b))[:, :, 0]
+        norm_xs = LA.vector_norm(xs_b, ord=2, dim=2)        
+        # TODO  : ADD WEIGHTS
+        ys_b_quad = norm_xs
+        print(ys_b_quad.shape)
+
+        x_1d = (xs_b[:, :, 0] +2)*(xs_b[:, :, 0] - 3)*xs_b[:, :, 0]**2*(xs_b[:, :, 0]-2) - 1 #  4*xs_b[:, :, 0]**2 + xs_b[:, :, 0]
         #         ys_b_quad = ys_b_quad * math.sqrt(self.n_dims) / ys_b_quad.std()
         # Renormalize to Linear Regression Scale
         # ys_b_quad = ys_b_quad / math.sqrt(3)
         ys_b_quad = self.scale * ys_b_quad
-        print("shapes : ")
-        print(xs_b.shape)
-        print(ys_b_quad.shape)
-        return ys_b_quad
+        # print("shapes : ")
+        # print(xs_b.shape)
+        # print(ys_b_quad.shape)
+        # return ys_b_quad
+        return x_1d
 
 
 class Relu2nnRegression(Task):

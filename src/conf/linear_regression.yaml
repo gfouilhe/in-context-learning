@@ -1,6 +1,6 @@
 inherit: 
     - base.yaml
-
+    - models/tiny.yaml
 training:
     task: linear_regression
     curriculum:
