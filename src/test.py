@@ -7,7 +7,7 @@ import pandas as pd
 import seaborn as sns
 import torch
 from tqdm.notebook import tqdm
-
+import numpy as np
 from eval import get_run_metrics, read_run_dir, get_model_from_run
 from plot_utils import basic_plot, collect_results, relevant_model_names
 
@@ -15,17 +15,20 @@ from plot_utils import basic_plot, collect_results, relevant_model_names
 # sns.set_theme('notebook', 'darkgrid')
 # palette = sns.color_palette('colorblind')
 
-run_dir = "/users/p22034/fouilhe/in-context-learning/src/models"
+# run_dir = "/users/p22034/fouilhe/in-context-learning/src/models"
+run_dir = "/users/p22034/fouilhe/in-context-learning/models/"
 
-df = read_run_dir(run_dir)
+# df = read_run_dir(run_dir)
 # print(df)  # list all the runs in our run_dir
 
-task = "linear_regression"
+# task = "affine_regression"
 #task = "sparse_linear_regression"
 #task = "decision_tree"
 #task = "relu_2nn_regression"
+task = "polynomial_regression"
 
-run_id = "pretrained"  # if you train more models, replace with the run_id from the table above
+# run_id = "pretrained"  # if you train more models, replace with the run_id from the table above
+run_id = "1d"
 
 run_path = os.path.join(run_dir, task, run_id)
 recompute_metrics = False
@@ -36,89 +39,84 @@ if recompute_metrics:
 def valid_row(r):
     return r.task == task and r.run_id == run_id
 
-# metrics = collect_results(run_dir, df, valid_row=valid_row)
-# _, conf = get_model_from_run(run_path, only_conf=True)
-# n_dims = conf.model.n_dims
-
-# models = relevant_model_names[task]
-# basic_plot(metrics["standard"], models=models)
-# plt.show()
-# plt.savefig("/users/p22034/fouilhe/in-context-learning/standard.png")
-# plt.close()
-
-# plot any OOD metrics
-# for name, metric in metrics.items():
-#     if name == "standard": continue
-   
-#     if "scale" in name:
-#         scale = float(name.split("=")[-1])**2
-#     else:
-#         scale = 1.0
-
-#     trivial = 1.0 if "noisy" not in name else (1+1/n_dims)
-#     fig, ax = basic_plot(metric, models=models, trivial=trivial * scale)
-#     ax.set_title(name)
-    
-#     if "ortho" in name:
-#         ax.set_xlim(-1, n_dims - 1)
-#     ax.set_ylim(-.1 * scale, 1.5 * scale)
-
-#     plt.show()
-#     plt.savefig(f"{name}.png")
 
 from samplers import get_data_sampler
 from tasks import get_task_sampler
 
 print("run_path : ", run_path)
 model, conf = get_model_from_run(run_path,with_cpu=True)
+
 # print("Model : ", model)
 n_dims = conf.model.n_dims
+print("n_dims", n_dims)
+# n_dims = 2
 # print("ndims", n_dims)
 batch_size = conf.training.batch_size
+batch_size = 1
 # print("batch_size", batch_size)
 data_sampler = get_data_sampler(conf.training.data, n_dims)
 task_sampler = get_task_sampler(
-    "quadratic_regression",
+    # "quadratic_regression",
     # "linear_regression",
+    # "toy_linear_regression",
+    # "toy_quadratic_regression",
+    "polynomial_regression",
+    # "toy_quadratic_regression",
+    # "toy_affine_regression",
     n_dims,
     batch_size,
     **conf.training.task_kwargs
 )
 
-task = task_sampler()
-xs = data_sampler.sample_xs(b_size=batch_size, n_points=conf.training.curriculum.points.end)
+task = task_sampler(max_dim=3)
+xs = data_sampler.sample_xs(b_size=batch_size, n_points=50)
 ys = task.evaluate(xs)
 
-# print("xs : ", xs[0,0,:])
-# print("ys : ", ys[0,0])
 
-# print("shapes : ",xs.shape, ys.shape)
+print("shapes xs, ys : ",xs.shape, ys.shape)
 
 plt.figure()
-plt.scatter(xs[:,:,0], ys, label="data",s=0.5)
+# plt.scatter(xs[0,:,0], ys[0], label="data",s=0.1)
+
+x = xs[0,:,0].sort().values.unsqueeze(1).unsqueeze(2)
+# x = x.view(1,64,1).repeat(batch_size,1,1)
+# print(x.shape)
+y = task.evaluate(x)
+# print(y.shape)
+# y = y[0]
+# x = x[0,:,0]
+# print("x : ", x)
+# print("y : ", y)
+
+# y=2.4*x
+# y=2.4*x-2
+# y = task.evaluate(x)
+# y=2*x**2+3*x-1
+# plt.plot(x, y, label="y=2.4x",color='blue')
+# plt.plot(x, y, label="y=2.4x-2",color='blue')
+plt.plot(x, y, label="y",color='grey',linestyle='--',linewidth=0.3)
 plt.xlabel("x")
-plt.ylabel("y_true")
+plt.ylabel("y")
+plt.show()
+# plt.savefig("/users/p22034/fouilhe/in-context-learning/data.png")
+# raise ValueError
 
-
-# with torch.no_grad():
-#     pred_on_iid_data = model(xs, ys)
-# sparsity = conf.training.task_kwargs.sparsity if "sparsity" in conf.training.task_kwargs else None
-# plt.scatter(xs[:,:,0], pred_on_iid_data, label="prediction",color='orange',marker='x',s=0.5)
-
-metric = task.get_metric()
+# metric = task.get_metric()
 # loss = metric(pred_on_iid_data, ys).numpy()
 
-lower_bound = 1*torch.ones(n_dims)
-upper_bound = 2*torch.ones(n_dims)
-
-data_sampler = get_data_sampler("uniform", n_dims, lower=lower_bound, upper=upper_bound)
-x_test = data_sampler.sample_xs(b_size=1, n_points=20)
-x_test = torch.sort(x_test, dim=0).values
+# lower_bound = 1*torch.ones(n_dims)
+# upper_bound = 2*torch.ones(n_dims)
+# data_sampler = get_data_sampler("uniform", n_dims, lower=lower_bound, upper=upper_bound)
+data_sampler = get_data_sampler(conf.training.data, n_dims)
+x_test = data_sampler.sample_xs(b_size=batch_size, n_points=80)
+# x_test = torch.sort(x_test, dim=0).values
 y_test = task.evaluate(x_test)
 
-print("x_test : ", x_test[:,:,0])
-print("y_test : ", y_test)
-plt.scatter(x_test[:,:,0], y_test, label="test data",color='red')
+print("x_test : ", x_test[:,:,:].shape)
+print("y_test : ", y_test.shape)
+# plt.scatter(x_test[0,:,0], y_test[0], label="test data",color='red',s=0.3)
+
+
 
 
 
@@ -137,18 +135,37 @@ plt.scatter(x_test[:,:,0], y_test, label="test data",color='red')
 # print("y1 - a12 x1:", y_test[0,:] - a12*x_test[0,:,0])
 # print("y2 - a12 x1:", y_test[1,:] - a12*x_test[0,:,0])
 
+x_s_and_test = torch.cat((xs, x_test), dim=1)
+y_s_and_test = torch.cat((ys, y_test), dim=1)
+
+print("x_s_and_test : ", x_s_and_test.shape)
+print("y_s_and_test : ", y_s_and_test.shape)
+
+
 with torch.no_grad():
-    pred_on_new_data = model(x_test, y_test)
+    pred = model(x_s_and_test, y_s_and_test)
 
+pred_on_iid_data = pred[:,:xs.shape[1]]
+pred_on_new_data = pred[:,xs.shape[1]:]
 
-print("pred_on_new_data : ", pred_on_new_data)
+# with torch.no_grad():
+#     pred_on_iid_data = model(xs, ys)
+# # sparsity = conf.training.task_kwargs.sparsity if "sparsity" in conf.training.task_kwargs else None
+
+# with torch.no_grad():
+#     pred_on_new_data = model(x_test, y_test)
+
+# plt.scatter(xs[0,1:,0], pred_on_iid_data[0,1:], label="prediction on train after the first batch",color='orange',marker='x',s=2)
+
+# print("pred_on_new_data : ", pred_on_new_data)
 # print("x_test : ", x_test)
 # print("y_test : ", y_test)
 
-plt.scatter(x_test[:,:,0], pred_on_new_data[:], label="prediction",color='green')
+plt.scatter(x_test[0,1:,0], pred_on_new_data[0,1:], label="prediction on test",color='red',marker="x",s=3)
 
-plt.ylim(-10, 10)
-plt.xlim(-5, 5)
+# plt.ylim(-10, 10)
+# plt.xlim(-5, 5)
+plt.legend()
 plt.show()
 plt.savefig("/users/p22034/fouilhe/in-context-learning/data.png")
 plt.close()

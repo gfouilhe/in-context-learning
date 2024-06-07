@@ -11,6 +11,8 @@ class Curriculum:
         self.n_points = args.points.start
         self.n_dims_schedule = args.dims
         self.n_points_schedule = args.points
+        self.polynomial_degree = args.polynomial_degree.start
+        self.polynomial_degree_schedule = args.polynomial_degree
         self.step_count = 0
 
     def update(self):
@@ -19,7 +21,9 @@ class Curriculum:
             self.n_dims_truncated, self.n_dims_schedule
         )
         self.n_points = self.update_var(self.n_points, self.n_points_schedule)
-
+        self.polynomial_degree = self.update_var(
+            self.polynomial_degree, self.polynomial_degree_schedule
+        )
     def update_var(self, var, schedule):
         if self.step_count % schedule.interval == 0:
             var += schedule.inc

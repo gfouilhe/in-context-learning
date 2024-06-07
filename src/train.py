@@ -66,7 +66,8 @@ def train(model, args):
     for i in pbar:
         data_sampler_args = {}
         task_sampler_args = {}
-
+        if "polynomial" in args.training.task:
+            task_sampler_args["max_dim"] = curriculum.polynomial_degree
         if "sparse" in args.training.task:
             task_sampler_args["valid_coords"] = curriculum.n_dims_truncated
         if num_training_examples is not None:
@@ -110,6 +111,7 @@ def train(model, args):
                     ),
                     "n_points": curriculum.n_points,
                     "n_dims": curriculum.n_dims_truncated,
+                    "polynomial_degree": curriculum.polynomial_degree,
                 },
                 step=i,
             )
@@ -171,7 +173,7 @@ if __name__ == "__main__":
     if not args.test_run:
         run_id = args.training.resume_id
         if run_id is None:
-            run_id = str(uuid.uuid4())
+            run_id = args.wandb.name+str(uuid.uuid4())
 
         out_dir = os.path.join(args.out_dir, run_id)
         if not os.path.exists(out_dir):

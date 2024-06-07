@@ -32,6 +32,7 @@ curriculum_base_schema = {
 curriculum_schema = {
     "dims": stdict(curriculum_base_schema),
     "points": stdict(curriculum_base_schema),
+    "polynomial_degree": merge(stdict(curriculum_base_schema),nullable,default(None)),
 }
 
 TASK_LIST = [
@@ -40,6 +41,9 @@ TASK_LIST = [
     "linear_classification",
     "relu_2nn_regression",
     "decision_tree",
+    "quadratic_regression",
+    "affine_regression",
+    "polynomial_regression",
 ]
 
 training_schema = {
@@ -59,7 +63,7 @@ training_schema = {
 
 wandb_schema = {
     "project": merge(tstring, default("in-context-training")),
-    "entity": merge(tstring, default("in-context")),
+    "entity": merge(tstring, default("")),
     "notes": merge(tstring, default("")),
     "name": merge(tstring, nullable, default(None)),
     "log_every_steps": merge(tinteger, default(10)),

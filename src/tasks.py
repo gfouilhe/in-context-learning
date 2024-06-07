@@ -60,6 +60,11 @@ def get_task_sampler(
         "quadratic_regression": QuadraticRegression,
         "relu_2nn_regression": Relu2nnRegression,
         "decision_tree": DecisionTree,
+        "toy_linear_regression": ToyLinearRegression,
+        "toy_quadratic_regression": ToyQuadraticRegression,
+        "affine_regression": AffineRegression,
+        "toy_affine_regression": ToyAffineRegression,
+        "polynomial_regression": PolynomialRegression,
     }
     if task_name in task_names_to_classes:
         task_cls = task_names_to_classes[task_name]
@@ -96,13 +101,6 @@ class LinearRegression(Task):
     def evaluate(self, xs_b):
         w_b = self.w_b.to(xs_b.device)
         ys_b = self.scale * (xs_b @ w_b)[:, :, 0]
-        # print("shapes : ")
-        # print(xs_b.shape)
-        # print(ys_b.shape)
-        # print(w_b.shape)
-        # print(self.scale)
-        # print((xs_b @ w_b).shape)
-        # print((xs_b @ w_b))
         return ys_b
 
     @staticmethod
@@ -117,47 +115,7 @@ class LinearRegression(Task):
     def get_training_metric():
         return mean_squared_error
 
-# class QuadraticRegression(Task):
-#     def __init__(self, n_dims, batch_size, pool_dict=None, seeds=None, scale=1):
-#         """scale: a constant by which to scale the randomly sampled weights."""
-#         super(LinearRegression, self).__init__(n_dims, batch_size, pool_dict, seeds)
-#         self.scale = scale
 
-#         if pool_dict is None and seeds is None:
-#             self.w_b_1 = torch.randn(self.b_size, self.n_dims, 1)
-#             self.w_b_2 = torch.randn(self.b_size, self.n_dims, 1)
-
-#         elif seeds is not None:
-#             self.w_b_1 = torch.zeros(self.b_size, self.n_dims, 1)
-#             self.w_b_2 = torch.zeros(self.b_size, self.n_dims, 1)
-#             generator = torch.Generator()
-#             assert len(seeds) == self.b_size
-#             for i, seed in enumerate(seeds):
-#                 generator.manual_seed(seed)
-#                 self.w_b_1[i] = torch.randn(self.n_dims, 1, generator=generator)
-#                 self.w_b_2[i] = torch.randn(self.n_dims, 1, generator=generator)
-#         else:
-#             assert "w" in pool_dict
-#             indices = torch.randperm(len(pool_dict["w"]))[:batch_size]
-#             self.w_b_1 = pool_dict["w"][indices]
-#             self.w_b_2 = pool_dict["w"][indices]
-
-#     def evaluate(self, xs_b):
-#         w_b = self.w_b.to(xs_b.device)
-#         ys_b = self.scale * (xs_b @ w_b)[:, :, 0]
-#         return ys_b
-
-#     @staticmethod
-#     def generate_pool_dict(n_dims, num_tasks, **kwargs):  # ignore extra args
-#         return {"w": torch.randn(num_tasks, n_dims, 1)}
-
-#     @staticmethod
-#     def get_metric():
-#         return squared_error
-
-#     @staticmethod
-#     def get_training_metric():
-#         return mean_squared_error
 class SparseLinearRegression(LinearRegression):
     def __init__(
         self,
@@ -399,3 +357,97 @@ class DecisionTree(Task):
     @staticmethod
     def get_training_metric():
         return mean_squared_error
+
+
+class ToyLinearRegression(LinearRegression):
+    def __init__(self, n_dims, batch_size, pool_dict=None, seeds=None, scale=1):
+        super(ToyLinearRegression, self).__init__(
+            n_dims, batch_size, pool_dict, seeds, scale
+        )
+
+    def evaluate(self, xs_b):
+        # w_b = 2.4*torch.ones(self.b_size, self.n_dims, 1).to(xs_b.device)
+        # ys_b = self.scale * (xs_b @ w_b)[:, :, 0]
+        # return ys_b
+        return 2.4*xs_b[:, :, 0]
+    
+class ToyQuadraticRegression(LinearRegression):
+    def __init__(self, n_dims, batch_size, pool_dict=None, seeds=None, scale=1):
+        super(ToyQuadraticRegression, self).__init__(
+            n_dims, batch_size, pool_dict, seeds, scale
+        )
+
+    def evaluate(self, xs_b):
+        # w_b = 2.4*torch.ones(self.b_size, self.n_dims, 1).to(xs_b.device)
+        # ys_b = self.scale * (xs_b @ w_b)[:, :, 0]
+        # return ys_b
+        x = xs_b[:, :, 0]
+        return (x-1)*(x+1)
+    
+class AffineRegression():
+    def __init__(self, n_dims, batch_size, pool_dict=None, seeds=None, scale=1):
+        super(AffineRegression, self).__init__(
+            n_dims, batch_size, pool_dict, seeds, scale
+        )
+        self.w_b = torch.randn(self.b_size, self.n_dims, 1)
+        self.w_c = torch.randn(self.b_size, 1)
+
+    def evaluate(self, xs_b):
+        w_b = self.w_b.to(xs_b.device)
+        w_c = self.wc.to(xs_b.device)
+        ys_b = self.scale * (xs_b @ w_b)[:, :, 0] + w_c
+        return ys_b
+    
+class ToyAffineRegression(AffineRegression):
+    def evaluate(self, xs_b):
+        w_b = 2.4*torch.ones(self.b_size, self.n_dims, 1).to(xs_b.device)
+        w_c = -2*torch.ones(self.b_size, 1).to(xs_b.device)
+        ys_b = self.scale * (xs_b @ w_b)[:, :, 0] + w_c
+        return ys_b
+    
+class PolynomialRegression(Task):
+    def __init__(self,  n_dims, batch_size, pool_dict=None, seeds=None,scale=1, max_dim=2):
+        super(PolynomialRegression, self).__init__(
+            n_dims, batch_size, pool_dict=None, seeds=None
+        )
+        self.max_dim = max_dim
+        self.scale = scale
+
+        if pool_dict is None and seeds is None:
+            self.coefficients = torch.randn(batch_size,n_dims, max_dim + 1)
+        elif seeds is not None:
+            self.coefficients = torch.zeros(batch_size,n_dims, max_dim + 1)
+            generator = torch.Generator()
+            assert len(seeds) == batch_size
+            for i, seed in enumerate(seeds):
+                generator.manual_seed(seed)
+                self.coefficients[i] = torch.randn(n_dims, max_dim+1, generator=generator)
+        else:
+            assert "w" in pool_dict
+            indices = torch.randperm(len(pool_dict["w"]))[:batch_size]
+            self.coefficients = pool_dict["w"][indices]
+
+
+    def evaluate(self, xs_b):
+        
+        # Compute the polynomial function
+        ys_b = torch.zeros(self.b_size, xs_b.shape[1]).to(xs_b.device)
+        for i in range(self.max_dim + 1):
+            x_powered = xs_b ** (self.max_dim - i)
+            coef = self.coefficients[:, :, i]
+            mul = torch.bmm(x_powered,coef.unsqueeze(2)).squeeze(2)
+            ys_b += mul
+        
+        # Scale the output
+        ys_b = self.scale * ys_b
+        
+        return ys_b
+    
+    @staticmethod
+    def get_metric():
+        return squared_error
+
+    @staticmethod
+    def get_training_metric():
+        return mean_squared_error
+    
