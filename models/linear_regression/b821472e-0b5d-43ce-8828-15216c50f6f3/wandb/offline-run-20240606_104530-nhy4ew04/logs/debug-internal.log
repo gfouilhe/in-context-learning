@@ -1,0 +1,13 @@
+2024-06-06 10:45:32,774 INFO    MainThread:34456 [internal.py:wandb_internal():92] W&B internal server running at pid: 34456, started at: 2024-06-06 10:45:32.772841
+2024-06-06 10:45:32,776 DEBUG   HandlerThread:34456 [handler.py:handle_request():141] handle_request: run_start
+2024-06-06 10:45:32,809 INFO    WriterThread:34456 [datastore.py:open_for_write():77] open: models/linear_regression/b821472e-0b5d-43ce-8828-15216c50f6f3/wandb/offline-run-20240606_104530-nhy4ew04/run-nhy4ew04.wandb
+2024-06-06 10:45:32,818 DEBUG   HandlerThread:34456 [meta.py:__init__():37] meta init
+2024-06-06 10:45:32,818 DEBUG   HandlerThread:34456 [meta.py:__init__():51] meta init done
+2024-06-06 10:45:32,819 DEBUG   HandlerThread:34456 [meta.py:probe():211] probe
+2024-06-06 10:45:32,833 DEBUG   HandlerThread:34456 [meta.py:_setup_git():201] setup git
+2024-06-06 10:45:32,854 DEBUG   HandlerThread:34456 [meta.py:_setup_git():208] setup git done
+2024-06-06 10:45:32,854 DEBUG   HandlerThread:34456 [meta.py:_save_pip():55] save pip
+2024-06-06 10:45:32,856 DEBUG   HandlerThread:34456 [meta.py:_save_pip():69] save pip done
+2024-06-06 10:45:32,856 DEBUG   HandlerThread:34456 [meta.py:_save_conda():76] save conda
+2024-06-06 10:45:45,690 DEBUG   HandlerThread:34456 [meta.py:_save_conda():86] save conda done
+2024-06-06 10:45:45,691 DEBUG   HandlerThread:34456 [meta.py:probe():249] probe done

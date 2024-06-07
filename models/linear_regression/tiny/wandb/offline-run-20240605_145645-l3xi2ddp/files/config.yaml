@@ -1,0 +1,90 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.12.11
+    framework: xgboost
+    huggingface_version: 4.17.0
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.8.12
+    start_time: 1717592205
+    t:
+      1:
+      - 1
+      - 5
+      - 6
+      - 11
+      - 49
+      2:
+      - 1
+      - 5
+      - 6
+      - 11
+      - 49
+      3:
+      - 4
+      - 13
+      - 16
+      4: 3.8.12
+      5: 0.12.11
+      6: 4.17.0
+      8:
+      - 5
+config:
+  desc: null
+  value: /users/p22034/fouilhe/in-context-learning/src/conf/linear_regression.yaml
+inherit:
+  desc: null
+  value:
+  - /users/p22034/fouilhe/in-context-learning/src/conf/base.yaml
+  - /users/p22034/fouilhe/in-context-learning/src/conf/models/tiny.yaml
+model:
+  desc: null
+  value:
+    family: gpt2
+    n_dims: 20
+    n_embd: 64
+    n_head: 2
+    n_layer: 3
+    n_positions: 101
+out_dir:
+  desc: null
+  value: ../models/linear_regression/60197512-5fc7-439e-b65f-322ecaf6810d
+test_run:
+  desc: null
+  value: false
+training:
+  desc: null
+  value:
+    batch_size: 64
+    curriculum:
+      dims:
+        end: 20
+        inc: 1
+        interval: 2000
+        start: 5
+      points:
+        end: 41
+        inc: 2
+        interval: 2000
+        start: 11
+    data: gaussian
+    keep_every_steps: 100000
+    learning_rate: 0.0001
+    num_tasks: null
+    num_training_examples: null
+    resume_id: null
+    save_every_steps: 1000
+    task: linear_regression
+    task_kwargs: {}
+    train_steps: 500001
+wandb:
+  desc: null
+  value:
+    entity: in-context
+    log_every_steps: 100
+    name: linear_regression_standard
+    notes: ''
+    project: in-context-training

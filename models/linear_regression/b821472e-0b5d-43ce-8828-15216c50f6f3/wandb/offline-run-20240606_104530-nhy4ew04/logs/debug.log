@@ -1,0 +1,22 @@
+2024-06-06 10:45:30,862 INFO    MainThread:34269 [wandb_setup.py:_flush():75] Loading settings from /users/p22034/fouilhe/.config/wandb/settings
+2024-06-06 10:45:30,862 INFO    MainThread:34269 [wandb_setup.py:_flush():75] Loading settings from /olympe2/p22034/fouilhe/in-context-learning/wandb/settings
+2024-06-06 10:45:30,862 INFO    MainThread:34269 [wandb_setup.py:_flush():75] Loading settings from environment variables: {}
+2024-06-06 10:45:30,862 WARNING MainThread:34269 [wandb_setup.py:_flush():75] Could not save program above cwd: /users/p22034/fouilhe/in-context-learning/src/train.py
+2024-06-06 10:45:30,862 INFO    MainThread:34269 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': None, 'program': '/users/p22034/fouilhe/in-context-learning/src/train.py'}
+2024-06-06 10:45:30,862 INFO    MainThread:34269 [wandb_init.py:_log_setup():405] Logging user logs to models/linear_regression/b821472e-0b5d-43ce-8828-15216c50f6f3/wandb/offline-run-20240606_104530-nhy4ew04/logs/debug.log
+2024-06-06 10:45:30,862 INFO    MainThread:34269 [wandb_init.py:_log_setup():406] Logging internal logs to models/linear_regression/b821472e-0b5d-43ce-8828-15216c50f6f3/wandb/offline-run-20240606_104530-nhy4ew04/logs/debug-internal.log
+2024-06-06 10:45:30,863 INFO    MainThread:34269 [wandb_init.py:init():439] calling init triggers
+2024-06-06 10:45:30,863 INFO    MainThread:34269 [wandb_init.py:init():442] wandb.init called with sweep_config: {}
+config: {'model': {'family': 'gpt2', 'n_embd': 64, 'n_layer': 3, 'n_head': 2, 'n_dims': 20, 'n_positions': 101}, 'wandb': {'entity': 'in-context', 'project': 'in-context-training', 'notes': '', 'log_every_steps': 100, 'name': 'linear_regression_standard'}, 'inherit': ['/users/p22034/fouilhe/in-context-learning/src/conf/base.yaml', '/users/p22034/fouilhe/in-context-learning/src/conf/models/tiny.yaml'], 'training': {'data': 'gaussian', 'task_kwargs': {}, 'batch_size': 64, 'learning_rate': 0.0001, 'save_every_steps': 1000, 'keep_every_steps': 100000, 'train_steps': 500001, 'curriculum': {'dims': {'start': 5, 'end': 20, 'inc': 1, 'interval': 2000}, 'points': {'interval': 2000, 'start': 11, 'end': 41, 'inc': 2}}, 'resume_id': None, 'num_training_examples': None, 'num_tasks': None, 'task': 'linear_regression'}, 'config': '/users/p22034/fouilhe/in-context-learning/src/conf/linear_regression.yaml', 'out_dir': 'models/linear_regression/b821472e-0b5d-43ce-8828-15216c50f6f3', 'test_run': False}
+2024-06-06 10:45:30,863 INFO    MainThread:34269 [wandb_init.py:init():492] starting backend
+2024-06-06 10:45:30,863 INFO    MainThread:34269 [backend.py:_multiprocessing_setup():99] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-06-06 10:45:30,956 INFO    MainThread:34269 [backend.py:ensure_launched():219] starting backend process...
+2024-06-06 10:45:31,117 INFO    MainThread:34269 [backend.py:ensure_launched():224] started backend process with pid: 34456
+2024-06-06 10:45:31,118 INFO    MainThread:34269 [wandb_init.py:init():501] backend started and connected
+2024-06-06 10:45:31,123 INFO    MainThread:34269 [wandb_init.py:init():565] updated telemetry
+2024-06-06 10:45:31,249 INFO    MainThread:34269 [wandb_init.py:init():625] starting run threads in backend
+2024-06-06 10:45:36,372 INFO    MainThread:34269 [wandb_run.py:_console_start():1733] atexit reg
+2024-06-06 10:45:36,374 INFO    MainThread:34269 [wandb_run.py:_redirect():1606] redirect: SettingsConsole.REDIRECT
+2024-06-06 10:45:36,374 INFO    MainThread:34269 [wandb_run.py:_redirect():1611] Redirecting console.
+2024-06-06 10:45:36,376 INFO    MainThread:34269 [wandb_run.py:_redirect():1667] Redirects installed.
+2024-06-06 10:45:36,377 INFO    MainThread:34269 [wandb_init.py:init():664] run started, returning control to user process

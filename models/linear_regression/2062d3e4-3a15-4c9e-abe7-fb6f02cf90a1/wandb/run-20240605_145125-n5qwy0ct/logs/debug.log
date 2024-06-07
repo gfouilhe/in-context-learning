@@ -1,0 +1,85 @@
+2024-06-05 14:51:25,577 INFO    MainThread:63470 [wandb_setup.py:_flush():75] Loading settings from /users/p22034/fouilhe/.config/wandb/settings
+2024-06-05 14:51:25,577 INFO    MainThread:63470 [wandb_setup.py:_flush():75] Loading settings from /olympe2/p22034/fouilhe/in-context-learning/wandb/settings
+2024-06-05 14:51:25,577 INFO    MainThread:63470 [wandb_setup.py:_flush():75] Loading settings from environment variables: {}
+2024-06-05 14:51:25,577 WARNING MainThread:63470 [wandb_setup.py:_flush():75] Could not save program above cwd: /users/p22034/fouilhe/in-context-learning/src/train.py
+2024-06-05 14:51:25,577 INFO    MainThread:63470 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': None, 'program': '/users/p22034/fouilhe/in-context-learning/src/train.py'}
+2024-06-05 14:51:25,577 INFO    MainThread:63470 [wandb_init.py:_log_setup():405] Logging user logs to ../models/linear_regression/2062d3e4-3a15-4c9e-abe7-fb6f02cf90a1/wandb/run-20240605_145125-n5qwy0ct/logs/debug.log
+2024-06-05 14:51:25,577 INFO    MainThread:63470 [wandb_init.py:_log_setup():406] Logging internal logs to ../models/linear_regression/2062d3e4-3a15-4c9e-abe7-fb6f02cf90a1/wandb/run-20240605_145125-n5qwy0ct/logs/debug-internal.log
+2024-06-05 14:51:25,577 INFO    MainThread:63470 [wandb_init.py:init():439] calling init triggers
+2024-06-05 14:51:25,577 INFO    MainThread:63470 [wandb_init.py:init():442] wandb.init called with sweep_config: {}
+config: {'model': {'family': 'gpt2', 'n_embd': 64, 'n_layer': 3, 'n_head': 2, 'n_dims': 20, 'n_positions': 101}, 'wandb': {'entity': 'in-context', 'project': 'in-context-training', 'notes': '', 'log_every_steps': 100, 'name': 'linear_regression_standard'}, 'inherit': ['/users/p22034/fouilhe/in-context-learning/src/conf/base.yaml', '/users/p22034/fouilhe/in-context-learning/src/conf/models/tiny.yaml'], 'training': {'data': 'gaussian', 'task_kwargs': {}, 'batch_size': 64, 'learning_rate': 0.0001, 'save_every_steps': 1000, 'keep_every_steps': 100000, 'train_steps': 500001, 'curriculum': {'dims': {'start': 5, 'end': 20, 'inc': 1, 'interval': 2000}, 'points': {'interval': 2000, 'inc': 2, 'end': 41, 'start': 11}}, 'num_training_examples': None, 'num_tasks': None, 'task': 'linear_regression', 'resume_id': None}, 'config': '/users/p22034/fouilhe/in-context-learning/src/conf/linear_regression.yaml', 'test_run': False, 'out_dir': '../models/linear_regression/2062d3e4-3a15-4c9e-abe7-fb6f02cf90a1'}
+2024-06-05 14:51:25,577 INFO    MainThread:63470 [wandb_init.py:init():492] starting backend
+2024-06-05 14:51:25,577 INFO    MainThread:63470 [backend.py:_multiprocessing_setup():99] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-06-05 14:51:25,589 INFO    MainThread:63470 [backend.py:ensure_launched():219] starting backend process...
+2024-06-05 14:51:25,596 INFO    MainThread:63470 [backend.py:ensure_launched():224] started backend process with pid: 63530
+2024-06-05 14:51:25,597 INFO    MainThread:63470 [wandb_init.py:init():501] backend started and connected
+2024-06-05 14:51:25,605 INFO    MainThread:63470 [wandb_init.py:init():565] updated telemetry
+2024-06-05 14:51:25,625 INFO    MainThread:63470 [wandb_init.py:init():596] communicating run to backend with 30 second timeout
+2024-06-05 14:51:29,588 ERROR   Thread-1  :63470 [retry.py:__call__():126] Retry attempt failed:
+Traceback (most recent call last):
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/urllib3/connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+OSError: [Errno 113] No route to host
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/urllib3/connectionpool.py", line 793, in urlopen
+    response = self._make_request(
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/urllib3/connectionpool.py", line 491, in _make_request
+    raise new_e
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/urllib3/connectionpool.py", line 467, in _make_request
+    self._validate_conn(conn)
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/urllib3/connectionpool.py", line 1099, in _validate_conn
+    conn.connect()
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/urllib3/connection.py", line 616, in connect
+    self.sock = sock = self._new_conn()
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/urllib3/connection.py", line 213, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPSConnection object at 0x2af7c6c3f910>: Failed to establish a new connection: [Errno 113] No route to host
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/urllib3/connectionpool.py", line 847, in urlopen
+    retries = retries.increment(
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/urllib3/util/retry.py", line 515, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.wandb.ai', port=443): Max retries exceeded with url: /graphql (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x2af7c6c3f910>: Failed to establish a new connection: [Errno 113] No route to host'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/wandb/sdk/lib/retry.py", line 102, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/wandb/sdk/internal/internal_api.py", line 140, in execute
+    return self.client.execute(*args, **kwargs)
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/wandb/vendor/gql-0.2.0/wandb_gql/client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/wandb/vendor/gql-0.2.0/wandb_gql/client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/wandb/vendor/gql-0.2.0/wandb_gql/transport/requests.py", line 38, in execute
+    request = requests.post(self.url, **post_args)
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/tmpdir/fouilhe/.conda/envs/in-context-learning/lib/python3.8/site-packages/requests/adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.wandb.ai', port=443): Max retries exceeded with url: /graphql (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x2af7c6c3f910>: Failed to establish a new connection: [Errno 113] No route to host'))
+2024-06-05 14:51:55,626 INFO    MainThread:63470 [interface_shared.py:_communicate_run():322] couldn't get run from backend
+2024-06-05 14:51:55,627 ERROR   MainThread:63470 [wandb_init.py:init():601] backend process timed out
+2024-06-05 14:51:55,627 ERROR   MainThread:63470 [wandb_init.py:init():610] encountered error: Error communicating with wandb process
+try: wandb.init(settings=wandb.Settings(start_method='fork'))
+or:  wandb.init(settings=wandb.Settings(start_method='thread'))
+For more info see: https://docs.wandb.ai/library/init#init-start-error
