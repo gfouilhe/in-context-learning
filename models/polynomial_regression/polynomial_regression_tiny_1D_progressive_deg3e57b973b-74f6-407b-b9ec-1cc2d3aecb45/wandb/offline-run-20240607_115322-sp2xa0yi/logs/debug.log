@@ -20,3 +20,15 @@ config: {'model': {'family': 'gpt2', 'n_embd': 64, 'n_layer': 3, 'n_head': 2, 'n
 2024-06-07 11:53:27,557 INFO    MainThread:356 [wandb_run.py:_redirect():1611] Redirecting console.
 2024-06-07 11:53:27,559 INFO    MainThread:356 [wandb_run.py:_redirect():1667] Redirects installed.
 2024-06-07 11:53:27,559 INFO    MainThread:356 [wandb_init.py:init():664] run started, returning control to user process
+2024-06-07 14:27:41,530 INFO    MainThread:356 [wandb_run.py:_atexit_cleanup():1702] got exitcode: 1
+2024-06-07 14:27:41,533 INFO    MainThread:356 [wandb_run.py:_restore():1674] restore
+2024-06-07 14:27:44,242 INFO    MainThread:356 [wandb_run.py:_on_finish():1831] got exit ret: 
+2024-06-07 14:27:44,353 INFO    MainThread:356 [wandb_run.py:_on_finish():1831] got exit ret: 
+2024-06-07 14:27:44,455 INFO    MainThread:356 [wandb_run.py:_on_finish():1831] got exit ret: done: true
+exit_result {
+}
+local_info {
+}
+
+2024-06-07 14:27:47,517 INFO    MainThread:356 [wandb_run.py:_footer_history_summary_info():2865] rendering history
+2024-06-07 14:27:47,524 INFO    MainThread:356 [wandb_run.py:_footer_history_summary_info():2894] rendering summary
