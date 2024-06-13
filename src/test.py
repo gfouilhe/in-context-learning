@@ -52,7 +52,7 @@ print("n_dims", n_dims)
 # n_dims = 2
 # print("ndims", n_dims)
 batch_size = conf.training.batch_size
-batch_size = 1
+# batch_size = 1
 # print("batch_size", batch_size)
 data_sampler = get_data_sampler(conf.training.data, n_dims)
 task_sampler = get_task_sampler(

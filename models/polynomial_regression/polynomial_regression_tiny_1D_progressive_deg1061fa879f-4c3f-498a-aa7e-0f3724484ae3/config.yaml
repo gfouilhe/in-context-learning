@@ -1,0 +1,47 @@
+config: /users/p22034/fouilhe/in-context-learning/src/conf/polynomial_regression.yaml
+inherit:
+- /users/p22034/fouilhe/in-context-learning/src/conf/base.yaml
+- /users/p22034/fouilhe/in-context-learning/src/conf/models/tiny.yaml
+model:
+  family: gpt2
+  n_dims: 1
+  n_embd: 64
+  n_head: 2
+  n_layer: 3
+  n_positions: 256
+out_dir: models/polynomial_regression/polynomial_regression_tiny_1D_progressive_deg1061fa879f-4c3f-498a-aa7e-0f3724484ae3
+test_run: false
+training:
+  batch_size: 64
+  curriculum:
+    dims:
+      end: 1
+      inc: 1
+      interval: 2000
+      start: 1
+    points:
+      end: 41
+      inc: 2
+      interval: 2000
+      start: 11
+    polynomial_degree:
+      end: 10
+      inc: 1
+      interval: 2500
+      start: 1
+  data: gaussian
+  keep_every_steps: 100000
+  learning_rate: 0.0001
+  num_tasks: null
+  num_training_examples: null
+  resume_id: null
+  save_every_steps: 1000
+  task: polynomial_regression
+  task_kwargs: {}
+  train_steps: 500001
+wandb:
+  entity: ''
+  log_every_steps: 100
+  name: polynomial_regression_tiny_1D_progressive_deg10
+  notes: ''
+  project: in-context-training

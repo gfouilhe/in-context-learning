@@ -3,4 +3,5 @@ model:
     n_embd: 64
     n_layer: 3
     n_head: 2
-    n_dims: 20
+    n_dims: 1
+

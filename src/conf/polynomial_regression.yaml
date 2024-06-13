@@ -12,10 +12,10 @@ training:
             inc: 2
             interval: 2000
         polynomial_degree: 
-            start: 4
-            end: 4
+            start: 1
+            end: 10
             inc: 1
-            interval: 10000
+            interval: 2500
         dims:
             start: 1
             end: 1
@@ -24,4 +24,4 @@ training:
 out_dir: models/polynomial_regression
 
 wandb:
-    name: "polynomial_regression_tiny_1D_nonprogressive_deg4"
+    name: "polynomial_regression_tiny_1D_progressive_deg10"
