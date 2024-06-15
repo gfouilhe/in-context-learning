@@ -414,7 +414,7 @@ class PolynomialRegression(Task):
         self.scale = scale
 
         if pool_dict is None and seeds is None:
-            self.coefficients = torch.randn(batch_size,n_dims, max_dim + 1)
+            self.coefficients = torch.randn )
         elif seeds is not None:
             self.coefficients = torch.zeros(batch_size,n_dims, max_dim + 1)
             generator = torch.Generator()
@@ -450,4 +450,5 @@ class PolynomialRegression(Task):
     @staticmethod
     def get_training_metric():
         return mean_squared_error
+    
     

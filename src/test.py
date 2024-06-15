@@ -7,27 +7,18 @@ import pandas as pd
 import seaborn as sns
 import torch
 from tqdm.notebook import tqdm
+from tasks import PolynomialRegression
 import numpy as np
 from eval import get_run_metrics, read_run_dir, get_model_from_run
 from plot_utils import basic_plot, collect_results, relevant_model_names
 
-
-# sns.set_theme('notebook', 'darkgrid')
-# palette = sns.color_palette('colorblind')
-
 # run_dir = "/users/p22034/fouilhe/in-context-learning/src/models"
 run_dir = "/users/p22034/fouilhe/in-context-learning/models/"
 
-# df = read_run_dir(run_dir)
-# print(df)  # list all the runs in our run_dir
-
 # task = "affine_regression"
-#task = "sparse_linear_regression"
-#task = "decision_tree"
-#task = "relu_2nn_regression"
+
 task = "polynomial_regression"
 
-# run_id = "pretrained"  # if you train more models, replace with the run_id from the table above
 run_id = "1d"
 
 run_path = os.path.join(run_dir, task, run_id)
@@ -69,6 +60,13 @@ task_sampler = get_task_sampler(
 )
 
 task = task_sampler(max_dim=3)
+
+if isinstance(task, PolynomialRegression):
+    coefficients = task.coefficients
+else:
+    coefficients = None
+
+
 xs = data_sampler.sample_xs(b_size=batch_size, n_points=50)
 ys = task.evaluate(xs)
 
@@ -78,31 +76,18 @@ print("shapes xs, ys : ",xs.shape, ys.shape)
 plt.figure()
 # plt.scatter(xs[0,:,0], ys[0], label="data",s=0.1)
 
-x = xs[0,:,0].sort().values.unsqueeze(1).unsqueeze(2)
-# x = x.view(1,64,1).repeat(batch_size,1,1)
-# print(x.shape)
-y = task.evaluate(x)
-# print(y.shape)
-# y = y[0]
-# x = x[0,:,0]
-# print("x : ", x)
-# print("y : ", y)
+x = xs[0,1:,0].sort().values
 
-# y=2.4*x
-# y=2.4*x-2
-# y = task.evaluate(x)
-# y=2*x**2+3*x-1
-# plt.plot(x, y, label="y=2.4x",color='blue')
-# plt.plot(x, y, label="y=2.4x-2",color='blue')
-plt.plot(x, y, label="y",color='grey',linestyle='--',linewidth=0.3)
-plt.xlabel("x")
-plt.ylabel("y")
-plt.show()
-# plt.savefig("/users/p22034/fouilhe/in-context-learning/data.png")
-# raise ValueError
-
-# metric = task.get_metric()
-# loss = metric(pred_on_iid_data, ys).numpy()
+if coefficients is not None:
+    batch_size, n_dims, max_dim_p1 = coefficients.shape
+    # shape = (batch_size,n_dims, max_dim + 1)
+    y = torch.zeros(x.shape)
+    for i in range(max_dim_p1):
+        a = coefficients[0,0,i]
+        y += a * x**(max_dim_p1 - i - 1)
+    plt.plot(x, y, label="ground truth",color='green',linestyle='--',linewidth=0.3)
+    plt.xlabel("x")
+    plt.ylabel("y")
 
 # lower_bound = 1*torch.ones(n_dims)
 # upper_bound = 2*torch.ones(n_dims)
@@ -116,14 +101,9 @@ print("x_test : ", x_test[:,:,:].shape)
 print("y_test : ", y_test.shape)
 # plt.scatter(x_test[0,:,0], y_test[0], label="test data",color='red',s=0.3)
 
-
-
-
-
 # a12 = (y_test[:,0] - y_test[:,1])/ (x_test[:,0,0] - x_test[:,1,0])
 # a23 = (y_test[:,1] - y_test[:,2])/ (x_test[:,1,0] - x_test[:,2,0])
 # a13 = (y_test[:,0] - y_test[:,2])/ (x_test[:,0,0] - x_test[:,2,0])
-
 
 # a12 = (y_test[0,:] - y_test[1,:])/ (x_test[0,:,0] - x_test[1,:,0])
 # a23 = (y_test[1,:] - y_test[2,:])/ (x_test[1,:,0] - x_test[2,:,0])
