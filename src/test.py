@@ -19,7 +19,7 @@ run_dir = "/users/p22034/fouilhe/in-context-learning/models/"
 
 task = "polynomial_regression"
 
-run_id = "1d"
+run_id = "polynomial_regression_tiny_1D_progressive_deg10"
 
 run_path = os.path.join(run_dir, task, run_id)
 recompute_metrics = False
@@ -51,15 +51,16 @@ task_sampler = get_task_sampler(
     # "linear_regression",
     # "toy_linear_regression",
     # "toy_quadratic_regression",
-    "polynomial_regression",
+    # "polynomial_regression",
     # "toy_quadratic_regression",
     # "toy_affine_regression",
+    "toy_polynomial_regression",
     n_dims,
     batch_size,
     **conf.training.task_kwargs
 )
 
-task = task_sampler(max_dim=3)
+task = task_sampler(max_dim=4)
 
 if isinstance(task, PolynomialRegression):
     coefficients = task.coefficients
@@ -76,7 +77,11 @@ print("shapes xs, ys : ",xs.shape, ys.shape)
 plt.figure()
 # plt.scatter(xs[0,:,0], ys[0], label="data",s=0.1)
 
-x = xs[0,1:,0].sort().values
+x = xs[:,1:,0]
+# flatten x along the batch dimension
+x = x.flatten()
+x = x.sort().values
+
 
 if coefficients is not None:
     batch_size, n_dims, max_dim_p1 = coefficients.shape
@@ -84,10 +89,12 @@ if coefficients is not None:
     y = torch.zeros(x.shape)
     for i in range(max_dim_p1):
         a = coefficients[0,0,i]
+        print("a : ", a)
         y += a * x**(max_dim_p1 - i - 1)
     plt.plot(x, y, label="ground truth",color='green',linestyle='--',linewidth=0.3)
     plt.xlabel("x")
     plt.ylabel("y")
+
 
 # lower_bound = 1*torch.ones(n_dims)
 # upper_bound = 2*torch.ones(n_dims)

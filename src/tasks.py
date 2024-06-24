@@ -65,6 +65,7 @@ def get_task_sampler(
         "affine_regression": AffineRegression,
         "toy_affine_regression": ToyAffineRegression,
         "polynomial_regression": PolynomialRegression,
+        "toy_polynomial_regression": ToyPolynomialRegression,
     }
     if task_name in task_names_to_classes:
         task_cls = task_names_to_classes[task_name]
@@ -414,7 +415,7 @@ class PolynomialRegression(Task):
         self.scale = scale
 
         if pool_dict is None and seeds is None:
-            self.coefficients = torch.randn )
+            self.coefficients = torch.randn(batch_size, n_dims, max_dim + 1)
         elif seeds is not None:
             self.coefficients = torch.zeros(batch_size,n_dims, max_dim + 1)
             generator = torch.Generator()
@@ -452,3 +453,36 @@ class PolynomialRegression(Task):
         return mean_squared_error
     
     
+class ToyPolynomialRegression(PolynomialRegression):
+    def __init__(self,  n_dims, batch_size, pool_dict=None, seeds=None,scale=1, max_dim=2):
+        super(PolynomialRegression, self).__init__(
+            n_dims, batch_size, pool_dict=None, seeds=None
+        )
+        self.max_dim = max_dim
+        self.scale = scale
+
+        self.coefficients = torch.ones(batch_size, n_dims, max_dim + 1)
+        
+        # -1/48 + x/24 + (5 x^2)/16 - (5 x^3)/12 - (11 x^4)/12 + x^5
+        if max_dim == 5:
+            self.coefficients[:, :, -1] = -1/48
+            self.coefficients[:, :, -2] = 1/24
+            self.coefficients[:, :, -3] = 5/16
+            self.coefficients[:, :, -4] = -5/12
+            self.coefficients[:, :, -5] = -11/12
+            self.coefficients[:, :, 0] = 1
+        elif max_dim == 4:
+            self.coefficients[:, :, -1] = 4
+            self.coefficients[:, :, -2] = 0
+            self.coefficients[:, :, -3] = -5
+            self.coefficients[:, :, -4] = 2
+            self.coefficients[:, :, -5] = 1
+        elif max_dim == 3:
+            self.coefficients[:, :, -1] = 4
+            self.coefficients[:, :, -2] = -4
+            self.coefficients[:, :, -3] = -1
+            self.coefficients[:, :, -4] = 1
+        else:
+            raise NotImplementedError
+        
+        # print(self.coefficients)

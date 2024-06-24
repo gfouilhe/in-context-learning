@@ -1,6 +1,6 @@
 inherit: 
     - base.yaml
-    - models/tiny.yaml
+    - models/4layers.yaml
 model:
     n_positions: 256
 training:
@@ -8,7 +8,7 @@ training:
     curriculum:
         points:
             start: 11
-            end: 41`
+            end: 41
             inc: 2
             interval: 2000
         polynomial_degree: 
