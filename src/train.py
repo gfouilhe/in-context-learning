@@ -13,7 +13,7 @@ from samplers import get_data_sampler
 from curriculum import Curriculum
 from schema import schema
 from models import build_model
-
+import datetime
 import wandb
 
 torch.backends.cudnn.benchmark = True
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     if not args.test_run:
         run_id = args.training.resume_id
         if run_id is None:
-            run_id = args.wandb.name+str(uuid.uuid4())
+            run_id = args.wandb.name+"_"+datetime.datetime.now().strftime("%m-%d_%H-%M")
 
         out_dir = os.path.join(args.out_dir, run_id)
         if not os.path.exists(out_dir):

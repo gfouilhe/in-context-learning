@@ -415,7 +415,7 @@ class PolynomialRegression(Task):
         self.scale = scale
 
         if pool_dict is None and seeds is None:
-            self.coefficients = torch.randn(batch_size, n_dims, max_dim + 1)
+            self.coefficients = 5*torch.randn(batch_size, n_dims, max_dim + 1)
         elif seeds is not None:
             self.coefficients = torch.zeros(batch_size,n_dims, max_dim + 1)
             generator = torch.Generator()

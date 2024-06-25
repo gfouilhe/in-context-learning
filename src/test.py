@@ -11,7 +11,7 @@ from tasks import PolynomialRegression
 import numpy as np
 from eval import get_run_metrics, read_run_dir, get_model_from_run
 from plot_utils import basic_plot, collect_results, relevant_model_names
-
+import datetime
 # run_dir = "/users/p22034/fouilhe/in-context-learning/src/models"
 run_dir = "/users/p22034/fouilhe/in-context-learning/models/"
 
@@ -19,7 +19,7 @@ run_dir = "/users/p22034/fouilhe/in-context-learning/models/"
 
 task = "polynomial_regression"
 
-run_id = "polynomial_regression_tiny_1D_progressive_deg10"
+run_id = "1d_4layers_deg_5_06-24_15-35"
 
 run_path = os.path.join(run_dir, task, run_id)
 recompute_metrics = False
@@ -60,7 +60,7 @@ task_sampler = get_task_sampler(
     **conf.training.task_kwargs
 )
 
-task = task_sampler(max_dim=4)
+task = task_sampler(max_dim=5)
 
 if isinstance(task, PolynomialRegression):
     coefficients = task.coefficients
@@ -68,7 +68,7 @@ else:
     coefficients = None
 
 
-xs = data_sampler.sample_xs(b_size=batch_size, n_points=50)
+xs = data_sampler.sample_xs(b_size=batch_size, n_points=100)
 ys = task.evaluate(xs)
 
 
@@ -91,7 +91,8 @@ if coefficients is not None:
         a = coefficients[0,0,i]
         print("a : ", a)
         y += a * x**(max_dim_p1 - i - 1)
-    plt.plot(x, y, label="ground truth",color='green',linestyle='--',linewidth=0.3)
+    # plt.plot(x, y, label="ground truth",color='green',linestyle='--',linewidth=0.3)
+    plt.scatter(x, y, label="ground truth",color='green',s=0.3)
     plt.xlabel("x")
     plt.ylabel("y")
 
@@ -148,15 +149,18 @@ pred_on_new_data = pred[:,xs.shape[1]:]
 # print("x_test : ", x_test)
 # print("y_test : ", y_test)
 
+
 plt.scatter(x_test[0,1:,0], pred_on_new_data[0,1:], label="prediction on test",color='red',marker="x",s=3)
 
-# plt.ylim(-10, 10)
-# plt.xlim(-5, 5)
+print("tested on a polynom of max dim :", task.max_dim)
+plt.ylim(-1,1)
+plt.xlim(-1,1)
+# # plt.xlim(-5, 5)
 plt.legend()
-plt.show()
-plt.savefig("/users/p22034/fouilhe/in-context-learning/data.png")
-plt.close()
 
+plt.show()
+plt.savefig(f"/users/p22034/fouilhe/in-context-learning/figures/{run_id}_on_{task.max_dim}.png")
+plt.close()
 
 
 # baseline = {

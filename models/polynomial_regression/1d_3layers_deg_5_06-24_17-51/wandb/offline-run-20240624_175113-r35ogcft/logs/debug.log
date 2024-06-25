@@ -1,0 +1,33 @@
+2024-06-24 17:51:13,677 INFO    MainThread:53902 [wandb_setup.py:_flush():75] Loading settings from /users/p22034/fouilhe/.config/wandb/settings
+2024-06-24 17:51:13,678 INFO    MainThread:53902 [wandb_setup.py:_flush():75] Loading settings from /olympe2/p22034/fouilhe/in-context-learning/wandb/settings
+2024-06-24 17:51:13,678 INFO    MainThread:53902 [wandb_setup.py:_flush():75] Loading settings from environment variables: {}
+2024-06-24 17:51:13,678 WARNING MainThread:53902 [wandb_setup.py:_flush():75] Could not save program above cwd: /users/p22034/fouilhe/in-context-learning/src/train.py
+2024-06-24 17:51:13,678 INFO    MainThread:53902 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': None, 'program': '/users/p22034/fouilhe/in-context-learning/src/train.py'}
+2024-06-24 17:51:13,678 INFO    MainThread:53902 [wandb_init.py:_log_setup():405] Logging user logs to models/polynomial_regression/1d_3layers_deg_5_06-24_17-51/wandb/offline-run-20240624_175113-r35ogcft/logs/debug.log
+2024-06-24 17:51:13,678 INFO    MainThread:53902 [wandb_init.py:_log_setup():406] Logging internal logs to models/polynomial_regression/1d_3layers_deg_5_06-24_17-51/wandb/offline-run-20240624_175113-r35ogcft/logs/debug-internal.log
+2024-06-24 17:51:13,678 INFO    MainThread:53902 [wandb_init.py:init():439] calling init triggers
+2024-06-24 17:51:13,678 INFO    MainThread:53902 [wandb_init.py:init():442] wandb.init called with sweep_config: {}
+config: {'model': {'family': 'gpt2', 'n_embd': 64, 'n_layer': 3, 'n_head': 2, 'n_dims': 1, 'n_positions': 256}, 'wandb': {'entity': '', 'project': 'in-context-training', 'notes': '', 'log_every_steps': 100, 'name': '1d_3layers_deg_5'}, 'inherit': ['/users/p22034/fouilhe/in-context-learning/src/conf/base.yaml', '/users/p22034/fouilhe/in-context-learning/src/conf/models/tiny.yaml'], 'training': {'data': 'gaussian', 'task_kwargs': {}, 'batch_size': 64, 'learning_rate': 0.0001, 'save_every_steps': 1000, 'keep_every_steps': 100000, 'train_steps': 500001, 'curriculum': {'dims': {'start': 1, 'end': 1, 'inc': 1, 'interval': 2000}, 'polynomial_degree': {'inc': 1, 'interval': 5000, 'end': 5, 'start': 1}, 'points': {'inc': 2, 'interval': 2000, 'end': 41, 'start': 11}}, 'resume_id': None, 'num_training_examples': None, 'task': 'polynomial_regression', 'num_tasks': None}, 'config': '/users/p22034/fouilhe/in-context-learning/src/conf/polynomial_regression.yaml', 'test_run': False, 'out_dir': 'models/polynomial_regression/1d_3layers_deg_5_06-24_17-51'}
+2024-06-24 17:51:13,678 INFO    MainThread:53902 [wandb_init.py:init():492] starting backend
+2024-06-24 17:51:13,678 INFO    MainThread:53902 [backend.py:_multiprocessing_setup():99] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-06-24 17:51:13,743 INFO    MainThread:53902 [backend.py:ensure_launched():219] starting backend process...
+2024-06-24 17:51:13,777 INFO    MainThread:53902 [backend.py:ensure_launched():224] started backend process with pid: 54048
+2024-06-24 17:51:13,778 INFO    MainThread:53902 [wandb_init.py:init():501] backend started and connected
+2024-06-24 17:51:13,783 INFO    MainThread:53902 [wandb_init.py:init():565] updated telemetry
+2024-06-24 17:51:13,805 INFO    MainThread:53902 [wandb_init.py:init():625] starting run threads in backend
+2024-06-24 17:51:18,901 INFO    MainThread:53902 [wandb_run.py:_console_start():1733] atexit reg
+2024-06-24 17:51:18,903 INFO    MainThread:53902 [wandb_run.py:_redirect():1606] redirect: SettingsConsole.REDIRECT
+2024-06-24 17:51:18,903 INFO    MainThread:53902 [wandb_run.py:_redirect():1611] Redirecting console.
+2024-06-24 17:51:18,906 INFO    MainThread:53902 [wandb_run.py:_redirect():1667] Redirects installed.
+2024-06-24 17:51:18,906 INFO    MainThread:53902 [wandb_init.py:init():664] run started, returning control to user process
+2024-06-24 20:08:12,683 INFO    MainThread:53902 [wandb_run.py:_atexit_cleanup():1702] got exitcode: 1
+2024-06-24 20:08:12,709 INFO    MainThread:53902 [wandb_run.py:_restore():1674] restore
+2024-06-24 20:08:15,607 INFO    MainThread:53902 [wandb_run.py:_on_finish():1831] got exit ret: 
+2024-06-24 20:08:15,709 INFO    MainThread:53902 [wandb_run.py:_on_finish():1831] got exit ret: done: true
+exit_result {
+}
+local_info {
+}
+
+2024-06-24 20:08:17,419 INFO    MainThread:53902 [wandb_run.py:_footer_history_summary_info():2865] rendering history
+2024-06-24 20:08:17,421 INFO    MainThread:53902 [wandb_run.py:_footer_history_summary_info():2894] rendering summary
