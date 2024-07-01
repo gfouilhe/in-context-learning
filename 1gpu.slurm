@@ -7,7 +7,8 @@
 #SBATCH --gres=gpu:1
 #SBATCH --mem=20000
 #SBATCH --time=12:00:00
-#SBATCH --mail-user=toto@mail.com
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=g.g.a.fouilhe@gmail.com
 
 #parmi les modules à charger
 module load cuda/11.8
