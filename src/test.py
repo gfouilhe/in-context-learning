@@ -7,7 +7,7 @@ import pandas as pd
 import seaborn as sns
 import torch
 from tqdm.notebook import tqdm
-from tasks import PolynomialRegression
+from tasks import PolynomialRegression, ChebyshevPolynomialRegression
 import numpy as np
 from eval import get_run_metrics, read_run_dir, get_model_from_run
 from plot_utils import basic_plot, collect_results, relevant_model_names
@@ -19,7 +19,7 @@ run_dir = "/users/p22034/fouilhe/in-context-learning/models/"
 
 task = "polynomial_regression"
 
-run_id = "1d_4layers_deg_5_06-24_15-35"
+run_id = "1d_3layers_deg_1_61points"
 
 run_path = os.path.join(run_dir, task, run_id)
 recompute_metrics = False
@@ -51,24 +51,32 @@ task_sampler = get_task_sampler(
     # "linear_regression",
     # "toy_linear_regression",
     # "toy_quadratic_regression",
-    # "polynomial_regression",
+    "polynomial_regression",
     # "toy_quadratic_regression",
     # "toy_affine_regression",
-    "toy_polynomial_regression",
+    # "toy_polynomial_regression",
+    # "chebyshev_polynomial_regression",
     n_dims,
     batch_size,
     **conf.training.task_kwargs
 )
 
-task = task_sampler(max_dim=5)
+task = task_sampler(max_dim=1)
 
 if isinstance(task, PolynomialRegression):
     coefficients = task.coefficients
+    polynomial_function = None
+elif isinstance(task, ChebyshevPolynomialRegression):
+    polynomial_function = task.polynomial_func
+    coefficients = None
 else:
     coefficients = None
+    polynomial_function = None
 
 
-xs = data_sampler.sample_xs(b_size=batch_size, n_points=100)
+
+
+xs = data_sampler.sample_xs(b_size=batch_size, n_points=60)
 ys = task.evaluate(xs)
 
 
@@ -92,6 +100,14 @@ if coefficients is not None:
         print("a : ", a)
         y += a * x**(max_dim_p1 - i - 1)
     # plt.plot(x, y, label="ground truth",color='green',linestyle='--',linewidth=0.3)
+    plt.scatter(x, y, label="ground truth",color='green',s=0.3)
+    plt.xlabel("x")
+    plt.ylabel("y")
+
+if polynomial_function is not None:
+    y = torch.zeros(x.shape)
+    for i in range(len(y)):
+        y[i] = polynomial_function(x[i])
     plt.scatter(x, y, label="ground truth",color='green',s=0.3)
     plt.xlabel("x")
     plt.ylabel("y")
@@ -122,39 +138,28 @@ print("y_test : ", y_test.shape)
 # print("a13 : ", a13)
 # print("y1 - a12 x1:", y_test[0,:] - a12*x_test[0,:,0])
 # print("y2 - a12 x1:", y_test[1,:] - a12*x_test[0,:,0])
+predictions = np.zeros(y_test.shape)
+for i in range(x_test.shape[1]): # 0 to select the first example in each batch
+    x = x_test[:,i,:].unsqueeze(1)
+    y = y_test[:,i].unsqueeze(1)
 
-x_s_and_test = torch.cat((xs, x_test), dim=1)
-y_s_and_test = torch.cat((ys, y_test), dim=1)
+    # plt.scatter(x, y, label="test data",color='red',s=0.3)
+    x_s_and_test = torch.cat((xs, x), dim=1)
+    y_s_and_test = torch.cat((ys, y), dim=1)
 
-print("x_s_and_test : ", x_s_and_test.shape)
-print("y_s_and_test : ", y_s_and_test.shape)
+    with torch.no_grad():
+        pred = model(x_s_and_test, y_s_and_test)
 
+    pred_on_iid_data = pred[:,:xs.shape[1]]
+    pred_on_new_data = pred[:,xs.shape[1]:]
+    predictions[:,i] = pred_on_new_data[:,0]
 
-with torch.no_grad():
-    pred = model(x_s_and_test, y_s_and_test)
-
-pred_on_iid_data = pred[:,:xs.shape[1]]
-pred_on_new_data = pred[:,xs.shape[1]:]
-
-# with torch.no_grad():
-#     pred_on_iid_data = model(xs, ys)
-# # sparsity = conf.training.task_kwargs.sparsity if "sparsity" in conf.training.task_kwargs else None
-
-# with torch.no_grad():
-#     pred_on_new_data = model(x_test, y_test)
-
-# plt.scatter(xs[0,1:,0], pred_on_iid_data[0,1:], label="prediction on train after the first batch",color='orange',marker='x',s=2)
-
-# print("pred_on_new_data : ", pred_on_new_data)
-# print("x_test : ", x_test)
-# print("y_test : ", y_test)
-
-
-plt.scatter(x_test[0,1:,0], pred_on_new_data[0,1:], label="prediction on test",color='red',marker="x",s=3)
+print("predictions : ", predictions.shape)
+plt.scatter(x_test[0,:,0], predictions[0], label="prediction on test",color='red',marker="x",s=3)
 
 print("tested on a polynom of max dim :", task.max_dim)
-plt.ylim(-1,1)
-plt.xlim(-1,1)
+# plt.ylim(-1,1)
+# plt.xlim(-1,1)
 # # plt.xlim(-5, 5)
 plt.legend()
 

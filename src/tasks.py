@@ -66,6 +66,7 @@ def get_task_sampler(
         "toy_affine_regression": ToyAffineRegression,
         "polynomial_regression": PolynomialRegression,
         "toy_polynomial_regression": ToyPolynomialRegression,
+        "chebyshev_polynomial_regression": ChebyshevPolynomialRegression,
     }
     if task_name in task_names_to_classes:
         task_cls = task_names_to_classes[task_name]
@@ -415,7 +416,7 @@ class PolynomialRegression(Task):
         self.scale = scale
 
         if pool_dict is None and seeds is None:
-            self.coefficients = 5*torch.randn(batch_size, n_dims, max_dim + 1)
+            self.coefficients = torch.randn(batch_size, n_dims, max_dim + 1)
         elif seeds is not None:
             self.coefficients = torch.zeros(batch_size,n_dims, max_dim + 1)
             generator = torch.Generator()
@@ -486,3 +487,45 @@ class ToyPolynomialRegression(PolynomialRegression):
             raise NotImplementedError
         
         # print(self.coefficients)
+
+class ChebyshevPolynomialRegression(Task):
+    def __init__(self,  n_dims, batch_size, pool_dict=None, seeds=None,scale=1, max_dim=2):
+        super(ChebyshevPolynomialRegression, self).__init__(
+            n_dims, batch_size, pool_dict=None, seeds=None
+        )
+        self.max_dim = max_dim
+        self.scale = scale
+
+        if pool_dict is None and seeds is None:
+            self.linear_coefficients = torch.randn(batch_size, n_dims, max_dim + 1)
+        elif seeds is not None:
+            self.linear_coefficients = torch.zeros(batch_size,n_dims, max_dim + 1)
+            generator = torch.Generator()
+            assert len(seeds) == batch_size
+            for i, seed in enumerate(seeds):
+                generator.manual_seed(seed)
+                self.linear_coefficients[i] = torch.randn(n_dims, max_dim+1, generator=generator)
+        else:
+            assert "w" in pool_dict
+            indices = torch.randperm(len(pool_dict["w"]))[:batch_size]
+            self.linear_coefficients = pool_dict["w"][indices]
+       
+        assert max_dim >= 2, "Chebyshev Polynomial requires max_dim >= 2"
+
+        self.Chebyshev_func = lambda x,n: torch.cos(n * torch.acos(x))
+        
+        self.polynomial_func = lambda x: torch.sum(torch.stack([self.linear_coefficients[:,:,i] * self.Chebyshev_func(x, i) for i in range(max_dim + 1)]), dim=0)
+
+        assert self.polynomial_func(torch.tensor([0.5])).shape == torch.Size([batch_size, n_dims])
+        
+    def evaluate(self, xs_b):
+        ys_b = self.polynomial_func(xs_b)
+        return ys_b
+    
+    @staticmethod
+    def get_metric():
+        return squared_error
+
+    @staticmethod
+    def get_training_metric():
+        return mean_squared_error
