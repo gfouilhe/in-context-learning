@@ -76,7 +76,7 @@ else:
 
 
 
-xs = data_sampler.sample_xs(b_size=batch_size, n_points=60)
+xs = data_sampler.sample_xs(b_size=batch_size, n_points=conf.training.curriculum.points.end-1)
 ys = task.evaluate(xs)
 
 
@@ -117,7 +117,7 @@ if polynomial_function is not None:
 # upper_bound = 2*torch.ones(n_dims)
 # data_sampler = get_data_sampler("uniform", n_dims, lower=lower_bound, upper=upper_bound)
 data_sampler = get_data_sampler(conf.training.data, n_dims)
-x_test = data_sampler.sample_xs(b_size=batch_size, n_points=80)
+x_test = data_sampler.sample_xs(b_size=batch_size, n_points=40)
 # x_test = torch.sort(x_test, dim=0).values
 y_test = task.evaluate(x_test)
 
@@ -146,6 +146,8 @@ for i in range(x_test.shape[1]): # 0 to select the first example in each batch
     # plt.scatter(x, y, label="test data",color='red',s=0.3)
     x_s_and_test = torch.cat((xs, x), dim=1)
     y_s_and_test = torch.cat((ys, y), dim=1)
+
+    assert x_s_and_test.shape[1] == xs.shape[1] + 1, "The number of points should be equal to the number of points in the training set"
 
     with torch.no_grad():
         pred = model(x_s_and_test, y_s_and_test)
