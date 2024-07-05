@@ -108,7 +108,7 @@ if polynomial_function is not None:
     y = torch.zeros(x.shape)
     for i in range(len(y)):
         y[i] = polynomial_function(x[i])
-    plt.scatter(x, y, label="ground truth",color='green',s=0.3)
+    plt.scatter(x, y, label="$((x_1,y_1),...(x_n,y_n))$",color='green',s=0.3)
     plt.xlabel("x")
     plt.ylabel("y")
 
@@ -157,7 +157,7 @@ for i in range(x_test.shape[1]): # 0 to select the first example in each batch
     predictions[:,i] = pred_on_new_data[:,0]
 
 print("predictions : ", predictions.shape)
-plt.scatter(x_test[0,:,0], predictions[0], label="prediction on test",color='red',marker="x",s=3)
+plt.scatter(x_test[0,:,0], predictions[0], label="$(x_{n+1}, ?)$",color='red',marker="x",s=3)
 
 print("tested on a polynom of max dim :", task.max_dim)
 # plt.ylim(-1,1)

@@ -1,6 +1,6 @@
 inherit: 
     - base.yaml
-    - models/tiny.yaml
+    - models/toy.yaml
 model:
     n_positions: 256
 training:
