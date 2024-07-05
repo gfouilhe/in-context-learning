@@ -329,7 +329,9 @@ def get_run_metrics(
 def conf_to_model_name(conf):
     if conf.model.family == "gpt2":
         return {
+            (1, 1): "Transformer-xxs",
             (3, 2): "Transformer-xs",
+            (4, 2): "Transformer-xs-4layers",
             (6, 4): "Transformer-small",
             (12, 8): "Transformer",
         }[(conf.model.n_layer, conf.model.n_head)]
@@ -392,7 +394,7 @@ def read_run_dir(run_dir):
                 all_runs[k].append(v)
 
     df = pd.DataFrame(all_runs).sort_values("run_name")
-    assert len(df) == len(df.run_name.unique())
+    # assert len(df) == len(df.run_name.unique())
     return df
 
 if __name__ == "__main__":

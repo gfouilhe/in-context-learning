@@ -12,6 +12,7 @@ import numpy as np
 from eval import get_run_metrics, read_run_dir, get_model_from_run
 from plot_utils import basic_plot, collect_results, relevant_model_names
 import datetime
+
 # run_dir = "/users/p22034/fouilhe/in-context-learning/src/models"
 run_dir = "/users/p22034/fouilhe/in-context-learning/models/"
 
@@ -22,14 +23,26 @@ task = "polynomial_regression"
 run_id = "1d_3layers_deg_1_61points"
 
 run_path = os.path.join(run_dir, task, run_id)
-recompute_metrics = False
-
+df = read_run_dir(run_dir)
+# print(df)
+recompute_metrics = True
+evaluate = True
 if recompute_metrics:
     get_run_metrics(run_path)  # these are normally precomputed at the end of training
 
 def valid_row(r):
     return r.task == task and r.run_id == run_id
 
+if evaluate:
+    metrics = collect_results(run_dir, df, valid_row=valid_row)
+    print("metrics available : ", metrics.keys(), metrics["standard"].keys())
+    _, conf = get_model_from_run(run_path, only_conf=True)
+    n_dims = conf.model.n_dims
+
+    models = relevant_model_names[task]
+    print("models : ", models)
+    basic_plot(metrics["standard"], models=models)
+    plt.savefig(f"/users/p22034/fouilhe/in-context-learning/figures/metrics_{run_id}.png")
 
 from samplers import get_data_sampler
 from tasks import get_task_sampler

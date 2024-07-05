@@ -16,8 +16,8 @@ module load conda
 module load gcc/12.3.0
 conda activate in-context-learning
 
-python /users/p22034/fouilhe/in-context-learning/src/train.py --config /users/p22034/fouilhe/in-context-learning/src/conf/polynomial_regression.yaml
-
+# python /users/p22034/fouilhe/in-context-learning/src/train.py --config /users/p22034/fouilhe/in-context-learning/src/conf/polynomial_regression.yaml
+python /users/p22034/fouilhe/in-context-learning/src/test.py
 
 
 

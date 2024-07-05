@@ -8,7 +8,7 @@ training:
     curriculum:
         points:
             start: 11
-            end: 61
+            end: 41
             inc: 2
             interval: 2000
         polynomial_degree: 
@@ -24,4 +24,4 @@ training:
 out_dir: models/polynomial_regression
 
 wandb:
-    name: "1d_tiny_deg_2_61points"
+    name: "1d_toy64_deg_2"
